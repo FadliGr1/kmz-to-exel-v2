@@ -1,0 +1,607 @@
+body {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+h1 {
+  text-align: center;
+}
+
+p {
+  margin: 0px;
+  color: #6256ca;
+}
+#dropZone {
+  border: 2px dashed #6256ca;
+  padding: 40px;
+  text-align: center;
+  margin: 20px 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+#dropZone:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(98, 86, 202, 0.15);
+  border-color: #7667ef;
+}
+
+#dropZone.drag-over {
+  background-color: rgba(98, 86, 202, 0.05);
+  border-style: solid;
+  transform: scale(1.01);
+}
+
+.drop-zone-content i {
+  font-size: 48px;
+  color: #6256ca;
+  margin-bottom: 15px;
+  transition: transform 0.3s ease;
+}
+
+#dropZone:hover .drop-zone-content i {
+  transform: translateY(-5px);
+}
+
+.btn i {
+  font-size: 14px; /* Ukuran icon di button */
+}
+
+.drop-zone-content .big-icon {
+  font-size: 48px; /* Ukuran icon besar untuk status file */
+  color: #6256ca;
+  margin-bottom: 15px;
+  transition: transform 0.3s ease;
+}
+
+.file-meta i {
+  font-size: 12px; /* Ukuran icon kecil untuk metadata */
+}
+#convertBtn,
+#downloadBtn {
+  color: #ffffff;
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  border-radius: 5px;
+  background-color: #6256ca;
+  border: none;
+}
+
+#convertBtn:hover,
+#downloadBtn:hover {
+  color: #f0f0f0;
+  cursor: pointer;
+  margin: 20px auto;
+  padding: 10px 20px;
+  border-radius: 5px;
+  background-color: #6256ca;
+}
+#loadingOverlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 1000;
+}
+#loadingText {
+  color: #6256ca;
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 20px;
+  height: 24px; /* Fixed height to prevent layout shift */
+}
+#resultDisplay {
+  display: none;
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #6256ca;
+  border-radius: 5px;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.preview-table {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.preview-table th {
+  background-color: #6256ca;
+  color: white;
+  padding: 8px;
+}
+
+.preview-table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+.preview-table tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.nav-tabs .nav-link {
+  color: #6256ca;
+}
+
+.nav-tabs .nav-link.active {
+  color: #6256ca;
+  font-weight: bold;
+}
+
+/* Style untuk result display */
+#resultDisplay ul {
+  list-style: none;
+  padding: 0;
+}
+
+#resultDisplay li {
+  padding: 8px;
+  margin: 4px 0;
+  background: #f8f9fa;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#resultDisplay li:hover {
+  background: #e9ecef;
+}
+
+#mapView {
+  height: 400px;
+  width: 100%;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+#map {
+  height: 400px !important;
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #f8f9fa;
+}
+
+.modal-dialog {
+  max-width: 800px; /* Lebih lebar untuk peta */
+}
+
+.modal-body {
+  padding: 1rem;
+  min-height: 500px; /* Memberikan ruang yang cukup untuk peta */
+}
+
+.leaflet-popup-content {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.leaflet-popup-content b {
+  color: #6256ca;
+}
+
+/* Styling untuk marker popup */
+.leaflet-popup-content-wrapper {
+  border-radius: 4px;
+}
+
+.leaflet-popup-tip-container {
+  margin-top: -1px;
+}
+
+.modal-header,
+.modal-footer {
+  background-color: #f8f9fa;
+}
+
+.form-check-input:checked {
+  background-color: #6256ca;
+  border-color: #6256ca;
+}
+
+.form-control:focus {
+  border-color: #6256ca;
+  box-shadow: 0 0 0 0.25rem rgba(98, 86, 202, 0.25);
+}
+
+.btn-primary {
+  background-color: #6256ca;
+  border-color: #6256ca;
+}
+
+.btn-primary:hover {
+  background-color: #5346ba;
+  border-color: #5346ba;
+}
+
+.file-info-container {
+  padding: 10px;
+}
+
+/* Styling untuk File Info Items */
+.file-info-item {
+  display: flex;
+  align-items: start;
+  margin-bottom: 15px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  border: 1px solid #e9ecef;
+}
+
+.file-info-item:hover {
+  transform: translateX(5px);
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(98, 86, 202, 0.1);
+}
+
+.file-info-item i {
+  font-size: 24px;
+  color: #6256ca;
+  margin-right: 15px;
+  padding: 10px;
+  background: rgba(98, 86, 202, 0.1);
+  border-radius: 8px;
+}
+
+/* Warning styling improvement */
+.warning-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 12px;
+  background: #fff3cd;
+  border-radius: 8px;
+  border: 1px solid #ffeeba;
+}
+
+.warning-item i {
+  margin-right: 12px;
+  color: #856404;
+  font-size: 18px;
+}
+
+.info-details h6 {
+  margin: 0;
+  color: #6256ca;
+  font-size: 14px;
+}
+
+.info-details p {
+  margin: 5px 0 0 0;
+  color: #333;
+}
+
+#fileWarnings {
+  margin-top: 15px;
+}
+
+.modal.fade .modal-dialog {
+  transition: transform 0.3s ease-out;
+  transform: scale(0.95);
+}
+
+.modal.show .modal-dialog {
+  transform: scale(1);
+}
+
+.preview-header,
+.map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.preview-title {
+  margin: 0;
+  color: #6256ca;
+  font-weight: 500;
+}
+
+.preview-count {
+  color: #6c757d;
+  font-size: 14px;
+}
+
+.popup-content {
+  padding: 8px;
+}
+
+.popup-content h4 {
+  color: #6256ca;
+  margin: 0 0 8px 0;
+  font-size: 16px;
+}
+
+.popup-content .coordinates {
+  color: #6c757d;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.coordinates i {
+  width: 16px;
+  color: #6256ca;
+}
+
+/* Result Display Styling */
+#resultDisplay {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.result-header {
+  padding: 20px;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.result-header-content {
+  flex: 1;
+}
+
+.result-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.file-count {
+  font-size: 14px;
+  color: #6c757d;
+  margin-left: 10px;
+  padding: 2px 8px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  font-weight: normal;
+}
+
+.result-info {
+  color: #6c757d;
+}
+
+.converted-files-list {
+  padding: 0;
+  margin: 0;
+}
+
+.file-item {
+  padding: 15px 20px;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.file-item:last-child {
+  border-bottom: none;
+}
+
+.file-item:hover {
+  background-color: #f8f9fa;
+  transform: translateX(5px);
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.file-icon {
+  font-size: 24px;
+  color: #6256ca;
+}
+
+.file-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.file-name {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.file-type {
+  font-size: 12px;
+  color: #6c757d;
+}
+
+.preview-icon {
+  color: #6c757d;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.file-item:hover .preview-icon {
+  opacity: 1;
+  color: #6256ca;
+}
+
+.download-section {
+  padding: 20px;
+  text-align: center;
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+}
+
+#resultWrapper {
+  position: relative;
+}
+
+#downloadBtn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.btn-download:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+}
+
+.download-meta {
+  margin-left: 8px;
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+/* Animation delays */
+.animate__delay-0s {
+  animation-delay: 0s;
+}
+.animate__delay-1s {
+  animation-delay: 0.1s;
+}
+.animate__delay-2s {
+  animation-delay: 0.2s;
+}
+.animate__delay-3s {
+  animation-delay: 0.3s;
+}
+.animate__delay-4s {
+  animation-delay: 0.4s;
+}
+
+/* Hover effects pada buttons */
+.btn {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn:active {
+  transform: scale(0.95);
+}
+
+/* Animasi untuk success indicators */
+@keyframes checkmark {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.success-icon {
+  animation: checkmark 0.5s ease-in-out;
+}
+
+/* Styling untuk Export Settings Modal */
+#settingsModal .modal-content {
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+#settingsModal .modal-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+#settingsModal .modal-title {
+  font-weight: 600;
+  color: #2c3e50;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#settingsModal .form-label {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 12px;
+}
+
+#settingsModal .mb-3 {
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 16px !important;
+  border: 1px solid #e9ecef;
+}
+
+#settingsModal .form-check {
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+#settingsModal .form-check:hover {
+  background: rgba(98, 86, 202, 0.05);
+}
+
+#settingsModal .form-check-input:checked {
+  background-color: #6256ca;
+  border-color: #6256ca;
+}
+
+#settingsModal .form-check-label {
+  cursor: pointer;
+}
+
+#settingsModal .form-control:focus {
+  border-color: #6256ca;
+  box-shadow: 0 0 0 0.25rem rgba(98, 86, 202, 0.25);
+}
+
+#settingsModal .modal-footer {
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+}
+
+#settingsModal .btn-secondary {
+  background: white;
+  border: 1px solid #e9ecef;
+  color: #6c757d;
+}
+
+#settingsModal .btn-secondary:hover {
+  background: #f8f9fa;
+  border-color: #dee2e6;
+}
+
+#settingsModal .btn-primary {
+  background-color: #6256ca;
+  border-color: #6256ca;
+}
+
+#settingsModal .btn-primary:hover {
+  background-color: #7667ef;
+  border-color: #7667ef;
+}
