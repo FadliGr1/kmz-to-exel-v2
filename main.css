@@ -605,3 +605,48 @@ p {
   background-color: #7667ef;
   border-color: #7667ef;
 }
+
+/* Styling untuk custom marker dan map controls */
+.custom-marker {
+  background: none;
+  border: none;
+}
+
+.leaflet-control-measure {
+  background-color: white !important;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.leaflet-control-layers {
+  border-radius: 4px !important;
+  border: none !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1) !important;
+}
+
+.marker-cluster-small {
+  background-color: rgba(98, 86, 202, 0.3) !important;
+}
+
+.marker-cluster-small div {
+  background-color: rgba(98, 86, 202, 0.5) !important;
+  color: white !important;
+}
+
+.marker-cluster-medium {
+  background-color: rgba(98, 86, 202, 0.4) !important;
+}
+
+.marker-cluster-medium div {
+  background-color: rgba(98, 86, 202, 0.6) !important;
+  color: white !important;
+}
+
+.marker-cluster-large {
+  background-color: rgba(98, 86, 202, 0.5) !important;
+}
+
+.marker-cluster-large div {
+  background-color: rgba(98, 86, 202, 0.7) !important;
+  color: white !important;
+}

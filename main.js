@@ -169,7 +169,7 @@ async function handleFileDrop(e) {
   // Helper function untuk format ukuran file
   function formatFileSize(bytes) {
     if (bytes === 0) return '0 Bytes';
-    const k = 1024;
+    const k = 1024; 
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
@@ -444,6 +444,9 @@ function showPreview(path) {
     const data = convertedData[path];
     if (!data) return;
   
+    // Simpan data original untuk filtering
+    let filteredData = [...data];
+    
     // Clear existing tabs and content
     previewTabs.innerHTML = '';
     previewTabContent.innerHTML = '';
@@ -458,6 +461,7 @@ function showPreview(path) {
       </button>
     `;
     previewTabs.appendChild(tableTab);
+    
   
     // Create map view tab
     const mapTab = document.createElement('li');
@@ -483,36 +487,154 @@ function showPreview(path) {
           </h6>
           <span class="preview-count">
             <i class="bi bi-list-ul me-1"></i>
-            ${data.length} records
+            <span id="recordCount">${data.length}</span> records
           </span>
         </div>
-      <div class="table-responsive">
-        
-        <table class="preview-table">
-          <thead>
-            <tr>
+
+        <!-- Search and Filter Controls -->
+        <div class="search-filter-container mb-3">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" class="form-control" id="searchInput" placeholder="Search in all columns...">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" id="filterColumn">
+                        <option value="all">All Columns</option>
+                        ${Object.keys(data[0]).map(key => `<option value="${key}">${key}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-primary w-100" id="exportFilteredBtn">
+                        <i class="bi bi-download me-2"></i>Export
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="preview-table" id="dataTable">
+                <thead>
+                    <tr>
     `;
+    
     const headers = Object.keys(data[0]);
     headers.forEach(header => {
-      tableHTML += `<th>${header}</th>`;
+        tableHTML += `
+            <th class="sortable" data-column="${header}">
+                ${header}
+                <i class="bi bi-arrow-down-up sort-icon"></i>
+            </th>
+        `;
     });
-    tableHTML += '</tr></thead><tbody>';
+
+    tableHTML += '</tr></thead><tbody id="tableBody">';
     
-    data.forEach((row, index) => {
-      tableHTML += `<tr class="animate__animated animate__fadeIn" style="animation-delay: ${index * 50}ms">`;
-      headers.forEach(header => {
-        tableHTML += `<td>${row[header]}</td>`;
-      });
-      tableHTML += '</tr>';
+    filteredData.forEach((row, index) => {
+        tableHTML += `<tr class="animate__animated animate__fadeIn" style="animation-delay: ${index * 50}ms">`;
+        headers.forEach(header => {
+            tableHTML += `<td>${row[header]}</td>`;
+        });
+        tableHTML += '</tr>';
     });
-    tableHTML += `
-          </tbody>
-        </table>
-      </div>
-    `;
+
+    tableHTML += `</tbody></table></div>`;
     
     tableContent.innerHTML = tableHTML;
     previewTabContent.appendChild(tableContent);
+
+    // Initialize search and filter functionality
+    const searchInput = document.getElementById('searchInput');
+    const filterColumn = document.getElementById('filterColumn');
+    const exportFilteredBtn = document.getElementById('exportFilteredBtn');
+    const tableBody = document.getElementById('tableBody');
+    const recordCount = document.getElementById('recordCount');
+    const sortableHeaders = document.querySelectorAll('.sortable');
+
+    // Add sort functionality
+    let currentSort = { column: null, direction: 'asc' };
+    sortableHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+            const column = header.dataset.column;
+            
+            // Reset other headers
+            sortableHeaders.forEach(h => h.classList.remove('sort-asc', 'sort-desc'));
+            
+            if (currentSort.column === column) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort = { column, direction: 'asc' };
+            }
+            
+            header.classList.add(`sort-${currentSort.direction}`);
+            
+            filteredData.sort((a, b) => {
+                let comparison = 0;
+                if (a[column] > b[column]) comparison = 1;
+                if (a[column] < b[column]) comparison = -1;
+                return currentSort.direction === 'asc' ? comparison : -comparison;
+            });
+            
+            updateTable();
+        });
+    });
+
+    // Search and filter functionality
+    function updateTable() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedColumn = filterColumn.value;
+        
+        filteredData = data.filter(row => {
+            if (selectedColumn === 'all') {
+                return Object.values(row).some(value => 
+                    String(value).toLowerCase().includes(searchTerm)
+                );
+            } else {
+                return String(row[selectedColumn])
+                    .toLowerCase()
+                    .includes(searchTerm);
+            }
+        });
+
+        // Update record count
+        recordCount.textContent = filteredData.length;
+
+        // Update table body
+        let newTableHTML = '';
+        filteredData.forEach((row, index) => {
+            newTableHTML += `<tr class="animate__animated animate__fadeIn" style="animation-delay: ${index * 50}ms">`;
+            headers.forEach(header => {
+                newTableHTML += `<td>${row[header]}</td>`;
+            });
+            newTableHTML += '</tr>';
+        });
+        tableBody.innerHTML = newTableHTML;
+    }
+
+    searchInput.addEventListener('input', updateTable);
+    filterColumn.addEventListener('change', updateTable);
+
+    // Export filtered data
+    exportFilteredBtn.addEventListener('click', () => {
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(filteredData);
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Filtered Data");
+        
+        if (exportSettings.format === 'xlsx') {
+            XLSX.writeFile(workbook, `${path}_filtered.xlsx`);
+        } else {
+            const csvContent = XLSX.utils.sheet_to_csv(worksheet);
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `${path}_filtered.csv`;
+            link.click();
+        }
+    });
   
     // Create map view content
     const mapContent = document.createElement('div');
@@ -539,91 +661,165 @@ function showPreview(path) {
   
     // Initialize map after modal is shown
     previewModal._element.addEventListener('shown.bs.modal', function () {
-      // Find first valid coordinates for initial center
-      let initialLat = -6.2088;  // Default to Jakarta coordinates
-      let initialLng = 106.8456;
-      let hasValidCoordinates = false;
-  
-      for (const point of data) {
+    // Find first valid coordinates for initial center
+    let initialLat = -6.2088;  // Default to Jakarta coordinates
+    let initialLng = 106.8456;
+    let hasValidCoordinates = false;
+
+    for (const point of data) {
         const lat = parseFloat(point.Latitude);
         const lng = parseFloat(point.Longitude);
         if (!isNaN(lat) && !isNaN(lng)) {
-          initialLat = lat;
-          initialLng = lng;
-          hasValidCoordinates = true;
-          break;
+            initialLat = lat;
+            initialLng = lng;
+            hasValidCoordinates = true;
+            break;
         }
-      }
-  
-      // Initialize the map with center and zoom
-      const map = L.map('map', {
-        center: [initialLat, initialLng],
-        zoom: hasValidCoordinates ? 13 : 5
-      });
-      
-      // Add OpenStreetMap tiles
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-      }).addTo(map);
-  
-      // Create bounds for auto-zoom
-      const bounds = L.latLngBounds();
-      let hasMarkers = false;
-      
-      // Add markers for each point
-      data.forEach(point => {
-        if (point.Latitude && point.Longitude) {
-          const lat = parseFloat(point.Latitude);
-          const lng = parseFloat(point.Longitude);
-          
-          if (!isNaN(lat) && !isNaN(lng)) {
-            // Create custom popup content
-            const popupContent = `
-              <div class="popup-content">
-                <h4>${point.Name || 'Unnamed Location'}</h4>
-                <div class="coordinates">
-                  <div><i class="bi bi-geo-alt"></i> Lat: ${lat}</div>
-                  <div><i class="bi bi-geo"></i> Lng: ${lng}</div>
-                </div>
-              </div>
-            `;
+    }
 
-            // Create marker with popup
-            const marker = L.marker([lat, lng])
-              .bindPopup(popupContent)
-              .addTo(map);
-            
-            bounds.extend([lat, lng]);
-            hasMarkers = true;
-          }
-        }
-      });
-  
-      // Fit map to bounds if we have markers
-      if (hasMarkers) {
-        map.fitBounds(bounds, { 
-          padding: [50, 50],
-          maxZoom: 15
+    // Layer Maps
+    const streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    });
+
+    const satellite = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+        maxZoom: 20,
+        subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
+        attribution: '© Google Satellite'
+    });
+
+    const terrain = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenTopoMap'
+    });
+
+    // Initialize map dengan layer control
+    const map = L.map('map', {
+        center: [initialLat, initialLng],
+        zoom: hasValidCoordinates ? 13 : 5,
+        layers: [streets] // default layer
+    });
+
+    // Base layers untuk control
+    const baseLayers = {
+        "Street": streets,
+        "Satellite": satellite,
+        "Terrain": terrain
+    };
+
+    // Tambahkan layer control
+    L.control.layers(baseLayers).addTo(map);
+
+    // Inisialisasi marker cluster
+    const markers = L.markerClusterGroup({
+        showCoverageOnHover: false,
+        maxClusterRadius: 50,
+        spiderfyOnMaxZoom: true
+    });
+
+    // Tambahkan measurement control
+    const measureControl = new L.Control.Measure({
+        position: 'topleft',
+        primaryLengthUnit: 'kilometers',
+        secondaryLengthUnit: 'meters',
+        primaryAreaUnit: 'sqkilometers',
+        secondaryAreaUnit: 'sqmeters',
+        activeColor: '#6256ca',
+        completedColor: '#4B41A3'
+    });
+    map.addControl(measureControl);
+
+    // Create bounds untuk auto-zoom
+    const bounds = L.latLngBounds();
+    let hasMarkers = false;
+
+    // Custom marker colors berdasarkan kondisi
+    function getMarkerColor(point) {
+        const name = point.Name.toLowerCase();
+        if (name.includes('tower')) return '#e74c3c';  // merah
+        if (name.includes('station')) return '#3498db'; // biru
+        if (name.includes('office')) return '#2ecc71'; // hijau
+        return '#6256ca'; // default ungu
+    }
+
+    // Custom marker icon
+    function createCustomMarker(color) {
+        return L.divIcon({
+            html: `
+                <div style="
+                    background-color: ${color};
+                    width: 12px;
+                    height: 12px;
+                    border-radius: 50%;
+                    border: 2px solid white;
+                    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+                "></div>
+            `,
+            className: 'custom-marker',
+            iconSize: [12, 12]
         });
-      }
-  
-      // Fix map display issues when shown in modal
-      setTimeout(() => {
-        map.invalidateSize();
-      }, 100);
-  
-      // Update map when tab is shown
-      const mapTabButton = document.querySelector('button[data-bs-target="#mapView"]');
-      mapTabButton.addEventListener('shown.bs.tab', function () {
-        map.invalidateSize();
-        if (hasMarkers) {
-          map.fitBounds(bounds, { 
+    }
+
+    // Add markers untuk setiap point
+    data.forEach(point => {
+        if (point.Latitude && point.Longitude) {
+            const lat = parseFloat(point.Latitude);
+            const lng = parseFloat(point.Longitude);
+            
+            if (!isNaN(lat) && !isNaN(lng)) {
+                // Create custom popup content
+                const popupContent = `
+                    <div class="popup-content">
+                        <h4>${point.Name || 'Unnamed Location'}</h4>
+                        <div class="coordinates">
+                            <div><i class="bi bi-geo-alt"></i> Lat: ${lat}</div>
+                            <div><i class="bi bi-geo"></i> Lng: ${lng}</div>
+                        </div>
+                    </div>
+                `;
+
+                // Create marker dengan custom icon
+                const color = getMarkerColor(point);
+                const marker = L.marker([lat, lng], {
+                    icon: createCustomMarker(color)
+                }).bindPopup(popupContent);
+                
+                // Add marker ke cluster group
+                markers.addLayer(marker);
+                
+                bounds.extend([lat, lng]);
+                hasMarkers = true;
+            }
+        }
+    });
+
+    // Add marker cluster ke map
+    map.addLayer(markers);
+
+    // Fit bounds jika ada markers
+    if (hasMarkers) {
+        map.fitBounds(bounds, { 
             padding: [50, 50],
             maxZoom: 15
-          });
+        });
+    }
+
+    // Fix map display issues when shown in modal
+    setTimeout(() => {
+        map.invalidateSize();
+    }, 100);
+
+    // Update map when tab is shown
+    const mapTabButton = document.querySelector('button[data-bs-target="#mapView"]');
+    mapTabButton.addEventListener('shown.bs.tab', function () {
+        map.invalidateSize();
+        if (hasMarkers) {
+            map.fitBounds(bounds, { 
+                padding: [50, 50],
+                maxZoom: 15
+            });
         }
-      });
-    }, { once: true });
+    });
+}, { once: true });
 }
 
 // Download function
