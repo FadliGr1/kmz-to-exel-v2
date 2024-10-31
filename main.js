@@ -914,3 +914,196 @@ window.addEventListener('scroll', () => {
   
   lastScroll = currentScroll;
 });
+
+// Update the event listener in your existing help menu code
+document.querySelector('.help-item:first-child').addEventListener('click', function(e) {
+  e.preventDefault();
+  const documentationModal = new bootstrap.Modal(document.getElementById('documentationModal'));
+  documentationModal.show();
+  
+  // Hide help menu after clicking
+  document.getElementById('helpMenu').classList.remove('active');
+});
+
+// Documentation search functionality
+document.getElementById('docSearch').addEventListener('input', function(e) {
+  const searchTerm = e.target.value.toLowerCase();
+  const sections = document.querySelectorAll('.content-section');
+  
+  sections.forEach(section => {
+    const content = section.textContent.toLowerCase();
+    const hasMatch = content.includes(searchTerm);
+    section.style.display = hasMatch ? 'block' : 'none';
+  });
+});
+
+// Smooth scroll to sections
+document.querySelectorAll('.doc-nav .nav-link').forEach(link => {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    
+    // Remove active class from all links
+    document.querySelectorAll('.doc-nav .nav-link').forEach(l => {
+      l.classList.remove('active');
+    });
+    
+    // Add active class to clicked link
+    this.classList.add('active');
+    
+    // Scroll to section
+    const targetId = this.getAttribute('href');
+    const targetSection = document.querySelector(targetId);
+    
+    document.querySelector('.doc-content').scrollTo({
+      top: targetSection.offsetTop - 20,
+      behavior: 'smooth'
+    });
+  });
+});
+
+// Print documentation
+function printDocs() {
+  const content = document.querySelector('.doc-content').cloneNode(true);
+  const printWindow = window.open('', '', 'height=600,width=800');
+  
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Documentation - KMZ to Excel Converter</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        <style>
+          body { padding: 2rem; }
+          .content-section { margin-bottom: 3rem; }
+          @media print { 
+            .feature-card, .step { 
+              break-inside: avoid; 
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <h1 class="mb-4">KMZ to Excel Converter Documentation</h1>
+        ${content.outerHTML}
+      </body>
+    </html>
+  `);
+  
+  printWindow.document.close();
+  printWindow.focus();
+  setTimeout(() => printWindow.print(), 500);
+}
+
+// Active section tracking on scroll
+const docContent = document.querySelector('.doc-content');
+docContent.addEventListener('scroll', function() {
+  const sections = document.querySelectorAll('.content-section');
+  let currentSection = '';
+  
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop;
+    if (docContent.scrollTop >= sectionTop - 100) {
+      currentSection = `#${section.id}`;
+    }
+  });
+  
+  if (currentSection !== '') {
+    document.querySelectorAll('.doc-nav .nav-link').forEach(link => {
+      link.classList.remove('active');
+      if (link.getAttribute('href') === currentSection) {
+        link.classList.add('active');
+      }
+    });
+  }
+});
+
+// Intersection Observer for section animations
+const sectionObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, {
+  threshold: 0.1
+});
+
+// Observe all sections
+document.querySelectorAll('.content-section').forEach(section => {
+  sectionObserver.observe(section);
+});
+
+// Mobile sidebar toggle
+const docSidebar = document.querySelector('.doc-sidebar');
+let isSidebarVisible = true;
+
+function toggleSidebar() {
+  if (window.innerWidth <= 768) {
+    isSidebarVisible = !isSidebarVisible;
+    docSidebar.style.transform = isSidebarVisible ? 'translateX(0)' : 'translateX(-100%)';
+  }
+}
+
+// Close sidebar when clicking a link on mobile
+document.querySelectorAll('.doc-nav .nav-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 768) {
+      toggleSidebar();
+    }
+  });
+});
+
+// Handle accordion accessibility
+document.querySelectorAll('.accordion-button').forEach(button => {
+  button.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      button.click();
+    }
+  });
+});
+
+// Search with highlighting
+function highlightSearchResults(searchTerm) {
+  const content = document.querySelector('.doc-content');
+  const regex = new RegExp(searchTerm, 'gi');
+  const walker = document.createTreeWalker(content, NodeFilter.SHOW_TEXT);
+  
+  while (walker.nextNode()) {
+    const node = walker.currentNode;
+    if (node.textContent.match(regex)) {
+      const span = document.createElement('span');
+      span.innerHTML = node.textContent.replace(regex, match => 
+        `<mark class="search-highlight">${match}</mark>`
+      );
+      node.parentNode.replaceChild(span, node);
+    }
+  }
+}
+
+// Clear highlights
+function clearHighlights() {
+  document.querySelectorAll('.search-highlight').forEach(highlight => {
+    const parent = highlight.parentNode;
+    parent.replaceChild(
+      document.createTextNode(highlight.textContent),
+      highlight
+    );
+  });
+}
+
+// Update modal size on orientation change
+window.addEventListener('orientationchange', () => {
+  setTimeout(() => {
+    if (window.innerWidth <= 768) {
+      document.querySelector('.modal-dialog').style.height = 
+        `${window.innerHeight}px`;
+    }
+  }, 200);
+});
+
+// Initialize tooltips
+document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => {
+  new bootstrap.Tooltip(el);
+});

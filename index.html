@@ -364,6 +364,518 @@
         </div>
       </div>
 
+      <!-- Documentation Modal -->
+      <div
+        class="modal fade"
+        id="documentationModal"
+        tabindex="-1"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-book doc-icon"></i>
+                <div>
+                  <h5 class="modal-title mb-0">Documentation</h5>
+                  <small class="text-muted">Everything you need to know</small>
+                </div>
+              </div>
+              <div class="modal-actions">
+                <button
+                  class="icon-button"
+                  onclick="printDocs()"
+                  title="Print documentation">
+                  <i class="bi bi-printer"></i>
+                </button>
+                <button class="icon-button" data-bs-dismiss="modal">
+                  <i class="bi bi-x-lg"></i>
+                </button>
+              </div>
+            </div>
+            <div class="modal-body p-0">
+              <div class="doc-container">
+                <!-- Sidebar Navigation -->
+                <div class="doc-sidebar">
+                  <div class="search-box">
+                    <i class="bi bi-search"></i>
+                    <input
+                      type="text"
+                      id="docSearch"
+                      placeholder="Search documentation..." />
+                  </div>
+                  <nav class="doc-nav">
+                    <div class="nav-section">
+                      <div class="nav-section-title">Getting Started</div>
+                      <a href="#overview" class="nav-link active">
+                        <i class="bi bi-house"></i>
+                        Overview
+                      </a>
+                      <a href="#quick-start" class="nav-link">
+                        <i class="bi bi-lightning"></i>
+                        Quick Start
+                      </a>
+                    </div>
+
+                    <div class="nav-section">
+                      <div class="nav-section-title">Features</div>
+                      <a href="#file-upload" class="nav-link">
+                        <i class="bi bi-cloud-upload"></i>
+                        File Upload
+                      </a>
+                      <a href="#validation" class="nav-link">
+                        <i class="bi bi-shield-check"></i>
+                        Validation
+                      </a>
+                      <a href="#conversion" class="nav-link">
+                        <i class="bi bi-arrow-repeat"></i>
+                        Conversion
+                      </a>
+                      <a href="#preview" class="nav-link">
+                        <i class="bi bi-eye"></i>
+                        Preview
+                      </a>
+                    </div>
+
+                    <div class="nav-section">
+                      <div class="nav-section-title">Advanced</div>
+                      <a href="#settings" class="nav-link">
+                        <i class="bi bi-gear"></i>
+                        Settings
+                      </a>
+                      <a href="#troubleshooting" class="nav-link">
+                        <i class="bi bi-wrench"></i>
+                        Troubleshooting
+                      </a>
+                    </div>
+                  </nav>
+                </div>
+
+                <!-- Documentation Content -->
+                <div class="doc-content">
+                  <!-- Tambahkan section-section ini di dalam div.doc-content -->
+                  <section id="overview" class="content-section">
+                    <h2>Overview</h2>
+                    <p class="lead">
+                      KMZ to Excel Converter is a powerful tool for converting
+                      KMZ files to Excel format with advanced visualization
+                      features.
+                    </p>
+
+                    <div class="feature-grid">
+                      <div class="feature-card">
+                        <i class="bi bi-arrows-move"></i>
+                        <h4>Drag & Drop</h4>
+                        <p>Simple drag and drop interface for file upload</p>
+                      </div>
+                      <div class="feature-card">
+                        <i class="bi bi-file-check"></i>
+                        <h4>Validation</h4>
+                        <p>Automatic file validation and structure checking</p>
+                      </div>
+                      <div class="feature-card">
+                        <i class="bi bi-map"></i>
+                        <h4>Preview</h4>
+                        <p>Interactive map and table preview</p>
+                      </div>
+                      <div class="feature-card">
+                        <i class="bi bi-gear"></i>
+                        <h4>Customizable</h4>
+                        <p>Flexible export settings and options</p>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section id="quick-start" class="content-section">
+                    <h2>Quick Start</h2>
+                    <div class="steps">
+                      <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                          <h4>Upload Your File</h4>
+                          <p>
+                            Drag and drop your KMZ file into the upload area or
+                            click to select a file.
+                          </p>
+                        </div>
+                      </div>
+                      <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                          <h4>Configure Settings</h4>
+                          <p>
+                            Choose your preferred output format and customize
+                            export settings.
+                          </p>
+                        </div>
+                      </div>
+                      <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                          <h4>Preview & Convert</h4>
+                          <p>
+                            Review your data in the preview panel and click
+                            convert to process your file.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section id="file-upload" class="content-section">
+                    <h2>File Upload</h2>
+
+                    <div class="info-box">
+                      <div class="info-icon">
+                        <i class="bi bi-info-circle"></i>
+                      </div>
+                      <div class="info-content">
+                        <h4>Supported Formats</h4>
+                        <p>
+                          Currently, we support KMZ files that contain KML data
+                          with placemarks.
+                        </p>
+                      </div>
+                    </div>
+
+                    <h3>File Requirements</h3>
+                    <div class="requirements-grid">
+                      <div class="requirement-card">
+                        <i class="bi bi-hdd"></i>
+                        <h4>Size Limits</h4>
+                        <ul>
+                          <li>Maximum: 50MB</li>
+                          <li>Minimum: 1KB</li>
+                        </ul>
+                      </div>
+                      <div class="requirement-card">
+                        <i class="bi bi-folder"></i>
+                        <h4>Structure</h4>
+                        <ul>
+                          <li>Must contain KML file</li>
+                          <li>Valid placemark data</li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div class="alert alert-tips">
+                      <i class="bi bi-lightbulb"></i>
+                      <div>
+                        <strong>Pro Tip:</strong>
+                        <p>
+                          You can also use keyboard shortcut (Space or Enter) to
+                          trigger file selection dialog when the drop zone is
+                          focused.
+                        </p>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section id="validation" class="content-section">
+                    <h2>Validation</h2>
+
+                    <div class="validation-process">
+                      <h3>What We Check</h3>
+                      <div class="check-list">
+                        <div class="check-item">
+                          <i class="bi bi-check-circle"></i>
+                          <div>
+                            <h4>File Format</h4>
+                            <p>Verifies if the file is a valid KMZ archive</p>
+                          </div>
+                        </div>
+                        <div class="check-item">
+                          <i class="bi bi-check-circle"></i>
+                          <div>
+                            <h4>Internal Structure</h4>
+                            <p>
+                              Checks for required KML file and valid folder
+                              structure
+                            </p>
+                          </div>
+                        </div>
+                        <div class="check-item">
+                          <i class="bi bi-check-circle"></i>
+                          <div>
+                            <h4>Data Integrity</h4>
+                            <p>Validates placemark data and coordinates</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <h3>Common Issues</h3>
+                      <div class="issues-table">
+                        <table class="table">
+                          <thead>
+                            <tr>
+                              <th>Issue</th>
+                              <th>Description</th>
+                              <th>Solution</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>Invalid Format</td>
+                              <td>File is not a valid KMZ archive</td>
+                              <td>
+                                Ensure file was exported correctly from Google
+                                Earth or similar software
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Missing KML</td>
+                              <td>No KML file found in archive</td>
+                              <td>Check if KMZ file was created properly</td>
+                            </tr>
+                            <tr>
+                              <td>Empty Placemarks</td>
+                              <td>No placemark data found</td>
+                              <td>
+                                Verify source data contains valid placemarks
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section id="conversion" class="content-section">
+                    <h2>Conversion</h2>
+
+                    <div class="conversion-options">
+                      <h3>Output Formats</h3>
+                      <div class="format-grid">
+                        <div class="format-card">
+                          <i class="bi bi-file-earmark-excel"></i>
+                          <h4>Excel (.xlsx)</h4>
+                          <ul>
+                            <li>Multiple sheets support</li>
+                            <li>Formatted data</li>
+                            <li>Data filtering capability</li>
+                          </ul>
+                        </div>
+                        <div class="format-card">
+                          <i class="bi bi-file-text"></i>
+                          <h4>CSV (.csv)</h4>
+                          <ul>
+                            <li>Universal compatibility</li>
+                            <li>Lightweight format</li>
+                            <li>Easy to process</li>
+                          </ul>
+                        </div>
+                      </div>
+
+                      <h3>Export Settings</h3>
+                      <div class="settings-list">
+                        <div class="setting-item">
+                          <div class="setting-header">
+                            <i class="bi bi-grid"></i>
+                            <h4>Column Selection</h4>
+                          </div>
+                          <p>
+                            Choose which data columns to include in the output:
+                          </p>
+                          <ul>
+                            <li>Name - Location name or title</li>
+                            <li>Latitude - Geographic latitude</li>
+                            <li>Longitude - Geographic longitude</li>
+                          </ul>
+                        </div>
+                        <div class="setting-item">
+                          <div class="setting-header">
+                            <i class="bi bi-folder2"></i>
+                            <h4>Output Mode</h4>
+                          </div>
+                          <div class="mode-options">
+                            <div class="mode-card">
+                              <h5>Separate Files</h5>
+                              <p>
+                                Maintains folder structure, creates individual
+                                files
+                              </p>
+                            </div>
+                            <div class="mode-card">
+                              <h5>Merged File</h5>
+                              <p>Combines all data into a single output file</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section id="preview" class="content-section">
+                    <h2>Preview Features</h2>
+
+                    <div class="preview-features">
+                      <div class="preview-type">
+                        <h3>Table View</h3>
+                        <div class="feature-list">
+                          <div class="feature-item">
+                            <i class="bi bi-search"></i>
+                            <div>
+                              <h4>Search & Filter</h4>
+                              <p>Quickly find and filter data points</p>
+                            </div>
+                          </div>
+                          <div class="feature-item">
+                            <i class="bi bi-sort-down"></i>
+                            <div>
+                              <h4>Sorting</h4>
+                              <p>
+                                Sort by any column in ascending or descending
+                                order
+                              </p>
+                            </div>
+                          </div>
+                          <div class="feature-item">
+                            <i class="bi bi-download"></i>
+                            <div>
+                              <h4>Export Filtered Data</h4>
+                              <p>Export only the data you need</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="preview-type">
+                        <h3>Map View</h3>
+                        <div class="feature-list">
+                          <div class="feature-item">
+                            <i class="bi bi-layers"></i>
+                            <div>
+                              <h4>Multiple Layers</h4>
+                              <p>Switch between different map types</p>
+                            </div>
+                          </div>
+                          <div class="feature-item">
+                            <i class="bi bi-geo-alt"></i>
+                            <div>
+                              <h4>Custom Markers</h4>
+                              <p>Color-coded markers based on location type</p>
+                            </div>
+                          </div>
+                          <div class="feature-item">
+                            <i class="bi bi-rulers"></i>
+                            <div>
+                              <h4>Measurement Tools</h4>
+                              <p>Measure distances and areas on the map</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section id="settings" class="content-section">
+                    <h2>Advanced Settings</h2>
+
+                    <div class="advanced-settings">
+                      <div class="setting-category">
+                        <h3>Output Customization</h3>
+                        <div class="settings-grid">
+                          <div class="setting-option">
+                            <h4>File Naming</h4>
+                            <p>Customize output file names and organization</p>
+                            <div class="code-example">
+                              <code>converted_[date]_[type].xlsx</code>
+                            </div>
+                          </div>
+                          <div class="setting-option">
+                            <h4>Data Format</h4>
+                            <p>Configure how data is formatted in the output</p>
+                            <ul>
+                              <li>Decimal places for coordinates</li>
+                              <li>Date formats</li>
+                              <li>Text case options</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  <section id="troubleshooting" class="content-section">
+                    <h2>Troubleshooting</h2>
+
+                    <div class="troubleshooting-content">
+                      <div class="faq-section">
+                        <h3>Common Questions</h3>
+                        <div class="accordion" id="faqAccordion">
+                          <div class="accordion-item">
+                            <h4 class="accordion-header">
+                              <button
+                                class="accordion-button"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#faq1">
+                                File won't upload?
+                              </button>
+                            </h4>
+                            <div
+                              id="faq1"
+                              class="accordion-collapse collapse show">
+                              <div class="accordion-body">
+                                <p>Check if:</p>
+                                <ul>
+                                  <li>File size is within limits (50MB max)</li>
+                                  <li>File is a valid KMZ format</li>
+                                  <li>Browser is up to date</li>
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="accordion-item">
+                            <h4 class="accordion-header">
+                              <button
+                                class="accordion-button collapsed"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#faq2">
+                                Data missing in output?
+                              </button>
+                            </h4>
+                            <div id="faq2" class="accordion-collapse collapse">
+                              <div class="accordion-body">
+                                <p>Ensure that:</p>
+                                <ul>
+                                  <li>
+                                    All required columns are selected in export
+                                    settings
+                                  </li>
+                                  <li>
+                                    Source KMZ file contains valid placemark
+                                    data
+                                  </li>
+                                  <li>No filters are accidentally applied</li>
+                                </ul>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="support-section">
+                        <h3>Need Help?</h3>
+                        <div class="support-card">
+                          <i class="bi bi-life-preserver"></i>
+                          <h4>Contact Support</h4>
+                          <p>Our team is here to help you with any issues</p>
+                          <button class="btn btn-primary">Get Support</button>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+
+                  <!-- Additional sections... -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div id="loadingOverlay">
         <l-jelly-triangle
           size="50"
