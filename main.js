@@ -847,3 +847,299 @@ function downloadConvertedFiles() {
         window.URL.revokeObjectURL(url);
     }
 }
+
+// Documentation Modal
+const documentationModal = new bootstrap.Modal(document.getElementById('documentationModal'));
+
+function showDocs() {
+  documentationModal.show();
+}
+
+// Scroll spy implementation
+const docSections = document.querySelectorAll('.doc-section');
+const navLinks = document.querySelectorAll('.doc-sidebar .nav-link');
+
+function updateActiveSection() {
+  let currentSection = '';
+  const modalBody = document.querySelector('.modal-body');
+  const scrollPosition = modalBody.scrollTop;
+
+  docSections.forEach(section => {
+    const sectionTop = section.offsetTop;
+    if (scrollPosition >= sectionTop - 100) {
+      currentSection = `#${section.id}`;
+    }
+  });
+
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === currentSection) {
+      link.classList.add('active');
+    }
+  });
+}
+
+// Smooth scroll untuk navigasi
+document.querySelectorAll('.doc-sidebar .nav-link').forEach(link => {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    const targetId = this.getAttribute('href');
+    const targetElement = document.querySelector(targetId);
+    const modalBody = document.querySelector('.modal-body');
+
+    // Remove active class from all links
+    document.querySelectorAll('.doc-sidebar .nav-link').forEach(l => 
+      l.classList.remove('active')
+    );
+
+    // Add active class to clicked link
+    this.classList.add('active');
+
+    // Calculate scroll position
+    const topOffset = targetElement.offsetTop;
+    modalBody.scrollTo({
+      top: topOffset,
+      behavior: 'smooth'
+    });
+  });
+});
+
+// Add scroll event listener to modal body
+document.querySelector('.modal-body').addEventListener('scroll', updateActiveSection);
+
+// Animation on modal open
+documentationModal._element.addEventListener('shown.bs.modal', function () {
+  const sections = document.querySelectorAll('.doc-section');
+  sections.forEach((section, index) => {
+    section.style.opacity = '0';
+    section.style.transform = 'translateY(20px)';
+    
+    setTimeout(() => {
+      section.style.transition = 'all 0.5s ease';
+      section.style.opacity = '1';
+      section.style.transform = 'translateY(0)';
+    }, index * 100);
+  });
+});
+
+// Keyboard shortcut (Ctrl/Cmd + /)
+document.addEventListener('keydown', function(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+    e.preventDefault();
+    showDocs();
+  }
+});
+
+// Initialize tooltip
+const docBtn = document.querySelector('.doc-btn');
+docBtn.setAttribute('title', 'Press Ctrl + / to open');
+docBtn.setAttribute('data-bs-toggle', 'tooltip');
+docBtn.setAttribute('data-bs-placement', 'left');
+const tooltip = new bootstrap.Tooltip(docBtn);
+
+// Mobile view adjustments
+function adjustForMobile() {
+  const docNavbar = document.querySelector('.doc-navbar');
+  if (window.innerWidth <= 768) {
+    docNavbar.style.position = 'fixed';
+    docNavbar.style.bottom = '20px';
+    docNavbar.style.top = 'auto';
+    docNavbar.style.right = '20px';
+    docNavbar.style.zIndex = '1050';
+  } else {
+    docNavbar.style.position = 'fixed';
+    docNavbar.style.top = '20px';
+    docNavbar.style.bottom = 'auto';
+    docNavbar.style.right = '20px';
+    docNavbar.style.zIndex = '1050';
+  }
+}
+
+// Call adjustForMobile on load and resize
+window.addEventListener('load', adjustForMobile);
+window.addEventListener('resize', adjustForMobile);
+
+// Search functionality with debounce
+const searchInput = document.getElementById('searchDocs');
+let searchTimeout;
+
+searchInput.addEventListener('input', function(e) {
+  // Add loading spinner
+  const spinner = document.createElement('div');
+  spinner.className = 'spinner-border spinner-border-sm text-primary';
+  spinner.style.position = 'absolute';
+  spinner.style.right = '40px';
+  spinner.style.top = '50%';
+  spinner.style.transform = 'translateY(-50%)';
+  
+  const existingSpinner = searchInput.parentElement.querySelector('.spinner-border');
+  if (!existingSpinner) {
+    searchInput.parentElement.appendChild(spinner);
+  }
+  
+  // Clear existing timeout
+  clearTimeout(searchTimeout);
+  
+  // Set new timeout for search
+  searchTimeout = setTimeout(() => {
+    const spinner = searchInput.parentElement.querySelector('.spinner-border');
+    if (spinner) {
+      spinner.remove();
+    }
+    performSearch(e.target.value);
+  }, 300);
+});
+
+// Search implementation
+function performSearch(searchTerm) {
+  searchTerm = searchTerm.toLowerCase();
+  const sections = document.querySelectorAll('.doc-section');
+  let hasResults = false;
+  
+  // Clear previous highlights
+  clearHighlights();
+  
+  sections.forEach(section => {
+    const content = section.textContent.toLowerCase();
+    const hasMatch = content.includes(searchTerm);
+    
+    if (hasMatch && searchTerm !== '') {
+      section.style.display = 'block';
+      highlightSearchTerms(section, searchTerm);
+      hasResults = true;
+    } else if (searchTerm === '') {
+      section.style.display = 'block';
+      hasResults = true;
+    } else {
+      section.style.display = 'none';
+    }
+  });
+  
+  // Show/hide no results message
+  updateNoResultsMessage(hasResults, searchTerm);
+}
+
+// Highlight search terms
+function highlightSearchTerms(element, searchTerm) {
+  const walker = document.createTreeWalker(
+    element,
+    NodeFilter.SHOW_TEXT,
+    null,
+    false
+  );
+  
+  let node;
+  while (node = walker.nextNode()) {
+    const text = node.textContent.toLowerCase();
+    if (text.includes(searchTerm)) {
+      const span = document.createElement('span');
+      const regex = new RegExp(`(${searchTerm})`, 'gi');
+      span.innerHTML = node.textContent.replace(
+        regex,
+        '<mark class="highlight">$1</mark>'
+      );
+      node.parentNode.replaceChild(span, node);
+    }
+  }
+}
+
+// Clear highlights
+function clearHighlights() {
+  const highlights = document.querySelectorAll('.highlight');
+  highlights.forEach(highlight => {
+    const parent = highlight.parentNode;
+    parent.replaceChild(
+      document.createTextNode(highlight.textContent),
+      highlight
+    );
+  });
+}
+
+// Update no results message
+function updateNoResultsMessage(hasResults, searchTerm) {
+  const existingMessage = document.getElementById('noSearchResults');
+  
+  if (!hasResults && searchTerm !== '') {
+    if (!existingMessage) {
+      const message = document.createElement('div');
+      message.id = 'noSearchResults';
+      message.className = 'text-center py-5 text-muted';
+      message.innerHTML = `
+        <i class="bi bi-search fs-2 mb-3 d-block"></i>
+        <p>No results found for "${searchTerm}"</p>
+        <small>Try using different keywords or check the spelling</small>
+      `;
+      document.querySelector('.doc-content').appendChild(message);
+    }
+  } else if (existingMessage) {
+    existingMessage.remove();
+  }
+}
+
+// Cleanup search on modal close
+documentationModal._element.addEventListener('hidden.bs.modal', function () {
+  searchInput.value = '';
+  clearHighlights();
+  const sections = document.querySelectorAll('.doc-section');
+  sections.forEach(section => {
+    section.style.display = 'block';
+  });
+  const noResults = document.getElementById('noSearchResults');
+  if (noResults) {
+    noResults.remove();
+  }
+});
+
+// Print documentation
+function printDocumentation() {
+  const printWindow = window.open('', '_blank');
+  const documentationContent = document.querySelector('.doc-content').cloneNode(true);
+  
+  // Remove highlights from print
+  const highlights = documentationContent.querySelectorAll('.highlight');
+  highlights.forEach(highlight => {
+    const text = document.createTextNode(highlight.textContent);
+    highlight.parentNode.replaceChild(text, highlight);
+  });
+  
+  const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <title>Documentation - KMZ to Excel Converter</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        <style>
+          body { padding: 20px; }
+          .doc-section { margin-bottom: 40px; }
+          @media print {
+            .no-print { display: none; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h1 class="mb-4">KMZ to Excel Converter Documentation</h1>
+          ${documentationContent.outerHTML}
+        </div>
+      </body>
+    </html>
+  `;
+  
+  printWindow.document.open();
+  printWindow.document.write(html);
+  printWindow.document.close();
+  
+  printWindow.onload = function() {
+    printWindow.print();
+  };
+}
+
+// Add print button to modal header
+const modalHeader = document.querySelector('#documentationModal .modal-header');
+const printBtn = document.createElement('button');
+printBtn.className = 'btn btn-outline-primary btn-sm ms-auto me-2';
+printBtn.innerHTML = '<i class="bi bi-printer"></i>';
+printBtn.setAttribute('title', 'Print documentation');
+printBtn.onclick = printDocumentation;
+modalHeader.insertBefore(printBtn, modalHeader.lastElementChild);
