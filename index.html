@@ -35,230 +35,79 @@
       href="https://cdn.jsdelivr.net/npm/leaflet-measure@3.1.0/dist/leaflet-measure.css" />
   </head>
   <body>
+    <!-- Modern Navbar -->
     <div class="row">
-      <!-- Tambahkan kode ini setelah navbar yang sudah ada atau di bagian atas body -->
-      <nav class="doc-navbar">
-        <button class="doc-btn" onclick="showDocs()">
-          <i class="bi bi-book me-2"></i>
-          Documentation
-        </button>
-      </nav>
-
-      <!-- Modal Documentation -->
-      <div
-        class="modal fade"
-        id="documentationModal"
-        tabindex="-1"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
-          <div class="modal-content">
-            <div class="modal-header">
-              <div class="d-flex align-items-center">
-                <i class="bi bi-book-half fs-4 me-2 text-primary"></i>
-                <h5 class="modal-title">Documentation</h5>
-              </div>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"></button>
+      <nav class="modern-navbar">
+        <div class="navbar-container">
+          <div class="navbar-brand">
+            <i class="bi bi-file-earmark-arrow-down brand-icon"></i>
+            <div class="brand-text">
+              <h1>KMZ Converter</h1>
+              <span class="brand-tagline">Convert & Visualize KMZ Data</span>
             </div>
-            <div class="modal-body">
-              <div class="doc-navigation">
-                <div class="search-docs mb-4">
-                  <div class="input-group">
-                    <span class="input-group-text">
-                      <i class="bi bi-search"></i>
-                    </span>
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="searchDocs"
-                      placeholder="Search documentation..." />
-                  </div>
+          </div>
+
+          <div class="navbar-actions">
+            <button
+              class="theme-toggle"
+              onclick="toggleTheme()"
+              title="Toggle theme">
+              <i class="bi bi-sun-fill light-icon"></i>
+              <i class="bi bi-moon-fill dark-icon"></i>
+            </button>
+
+            <a
+              href="https://github.com/FadliGr1"
+              target="_blank"
+              class="github-link"
+              title="View on GitHub">
+              <i class="bi bi-github"></i>
+            </a>
+
+            <div class="dropdown">
+              <button class="help-btn" onclick="toggleHelpMenu()">
+                <i class="bi bi-question-circle"></i>
+                <span>Help</span>
+              </button>
+              <div class="help-menu" id="helpMenu">
+                <div class="help-header">
+                  <i class="bi bi-info-circle"></i>
+                  <span>Quick Help</span>
                 </div>
-                <nav class="doc-sidebar">
-                  <ul class="nav flex-column">
-                    <li class="nav-item">
-                      <a class="nav-link active" href="#features">
-                        <i class="bi bi-stars me-2"></i>
-                        Fitur Utama
-                      </a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#tech-specs">
-                        <i class="bi bi-gear me-2"></i>
-                        Spesifikasi Teknis
-                      </a>
-                    </li>
-                    <li class="nav-item">
-                      <a class="nav-link" href="#user-guide">
-                        <i class="bi bi-journal-text me-2"></i>
-                        Panduan Penggunaan
-                      </a>
-                    </li>
-                  </ul>
-                </nav>
-              </div>
-
-              <div class="doc-content">
-                <!-- Fitur Utama -->
-                <section id="features" class="doc-section">
-                  <h2>Fitur Utama</h2>
-
-                  <div class="feature-card">
-                    <div class="feature-icon">
-                      <i class="bi bi-cloud-upload"></i>
+                <div class="help-content">
+                  <a href="#" class="help-item">
+                    <i class="bi bi-book"></i>
+                    <div>
+                      <h4>Documentation</h4>
+                      <span>Learn how to use</span>
                     </div>
-                    <div class="feature-details">
-                      <h3>File Upload & Validasi</h3>
-                      <ul>
-                        <li>Mendukung drag & drop file KMZ</li>
-                        <li>Validasi format file (.kmz)</li>
-                        <li>Batasan ukuran (max 50MB, min 1KB)</li>
-                        <li>Validasi struktur internal</li>
-                        <li>Pengecekan file KML dan placemarks</li>
-                      </ul>
+                  </a>
+                  <a href="#" class="help-item">
+                    <i class="bi bi-play-circle"></i>
+                    <div>
+                      <h4>Tutorial</h4>
+                      <span>Watch video guide</span>
                     </div>
-                  </div>
-
-                  <div class="feature-card">
-                    <div class="feature-icon">
-                      <i class="bi bi-file-earmark-text"></i>
+                  </a>
+                  <a href="#" class="help-item">
+                    <i class="bi bi-chat-dots"></i>
+                    <div>
+                      <h4>Support</h4>
+                      <span>Get help</span>
                     </div>
-                    <div class="feature-details">
-                      <h3>Export Settings</h3>
-                      <ul>
-                        <li>Format: Excel (.xlsx) / CSV (.csv)</li>
-                        <li>Pemilihan kolom (Name, Latitude, Longitude)</li>
-                        <li>Mode output (separate/merged files)</li>
-                        <li>Kustomisasi nama file</li>
-                      </ul>
-                    </div>
-                  </div>
-
-                  <div class="feature-card">
-                    <div class="feature-icon">
-                      <i class="bi bi-map"></i>
-                    </div>
-                    <div class="feature-details">
-                      <h3>Data Preview</h3>
-                      <ul>
-                        <li>Table View dengan fitur sort & filter</li>
-                        <li>Map View dengan multiple layers</li>
-                        <li>Marker clustering</li>
-                        <li>Custom markers berdasarkan tipe</li>
-                        <li>Tool pengukuran jarak & area</li>
-                      </ul>
-                    </div>
-                  </div>
-                </section>
-
-                <!-- Spesifikasi Teknis -->
-                <section id="tech-specs" class="doc-section">
-                  <h2>Spesifikasi Teknis</h2>
-
-                  <div class="specs-grid">
-                    <div class="spec-item">
-                      <h4>Dependencies</h4>
-                      <ul>
-                        <li>JSZip 3.7.1</li>
-                        <li>XLSX 0.17.5</li>
-                        <li>Leaflet</li>
-                        <li>Bootstrap 5.3.3</li>
-                        <li>Bootstrap Icons</li>
-                      </ul>
-                    </div>
-
-                    <div class="spec-item">
-                      <h4>Browser Support</h4>
-                      <ul>
-                        <li>Modern browsers</li>
-                        <li>Responsive design</li>
-                        <li>Drag & drop API</li>
-                        <li>Modern JavaScript</li>
-                      </ul>
-                    </div>
-
-                    <div class="spec-item">
-                      <h4>Batasan Sistem</h4>
-                      <ul>
-                        <li>Max file: 50MB</li>
-                        <li>Min file: 1KB</li>
-                        <li>Input: KMZ only</li>
-                        <li>Output: XLSX/CSV</li>
-                      </ul>
-                    </div>
-                  </div>
-                </section>
-
-                <!-- Panduan Penggunaan -->
-                <section id="user-guide" class="doc-section">
-                  <h2>Panduan Penggunaan</h2>
-
-                  <div class="steps-container">
-                    <div class="step-item">
-                      <div class="step-number">1</div>
-                      <div class="step-content">
-                        <h4>Upload File</h4>
-                        <p>
-                          Drag & drop file KMZ ke area upload, atau klik area
-                          untuk memilih file
-                        </p>
-                      </div>
-                    </div>
-
-                    <div class="step-item">
-                      <div class="step-number">2</div>
-                      <div class="step-content">
-                        <h4>Validasi & Preview</h4>
-                        <p>
-                          Sistem akan memvalidasi file dan menampilkan informasi
-                          serta warning jika ada
-                        </p>
-                      </div>
-                    </div>
-
-                    <div class="step-item">
-                      <div class="step-number">3</div>
-                      <div class="step-content">
-                        <h4>Konfigurasi Export</h4>
-                        <p>
-                          Pilih format, kolom, dan mode output sesuai kebutuhan
-                        </p>
-                      </div>
-                    </div>
-
-                    <div class="step-item">
-                      <div class="step-number">4</div>
-                      <div class="step-content">
-                        <h4>Preview & Verifikasi</h4>
-                        <p>
-                          Cek data dalam tabel dan verifikasi lokasi pada peta
-                        </p>
-                      </div>
-                    </div>
-
-                    <div class="step-item">
-                      <div class="step-number">5</div>
-                      <div class="step-content">
-                        <h4>Download</h4>
-                        <p>
-                          Klik tombol download untuk mengunduh file hasil
-                          konversi
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </section>
+                  </a>
+                </div>
+                <div class="help-footer">
+                  <span>Version 1.0.0</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </nav>
     </div>
 
-    <div class="row">
+    <div class="row mt-5 pt-5">
       <h1>KMZ to Excel Converter</h1>
       <div id="dropZone">
         <p>Drag and drop your KMZ file here, or click to select a file</p>
